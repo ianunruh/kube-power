@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kube-power
+spec:
+  arguments:
+    parameters:
+    - name: image
+      value: ghcr.io/ianunruh/kube-power:v1.0.0
+    - name: target
+      value: kp-resume
+
+  serviceAccountName: kube-power
+
+  entrypoint: dag
+
+  templates:
+  - name: dag
+    dag:
+      target: '{{workflow.parameters.target}}'
+      tasks:
+      - name: kp-suspend
+        template: kp-suspend
+      - name: resume-wait
+        template: resume-wait
+        dependencies: [kp-suspend]
+      - name: kp-resume
+        template: kp-resume
+        dependencies: [resume-wait]
+
+  - name: kp-suspend
+    script:
+      image: '{{workflow.parameters.image}}'
+      command: [bash]
+      source: |
+        kube-power suspend
+
+  - name: resume-wait
+    suspend: {}
+
+  - name: kp-resume
+    script:
+      image: '{{workflow.parameters.image}}'
+      command: [bash]
+      source: |
+        kube-power resume
