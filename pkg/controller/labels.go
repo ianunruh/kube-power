@@ -12,6 +12,7 @@ const (
 	CephConsumerClass = "ceph-consumer"
 	CephDaemonClass   = "ceph-daemon"
 	OperatorClass     = "operator"
+	CronJobClass      = "cronjob"
 )
 
 func appSelector(name string) labels.Selector {

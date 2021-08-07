@@ -449,9 +449,7 @@ func (c *Controller) suspendDeploy(deploy *appsv1.Deployment, class string) erro
 	}
 
 	deploy = deploy.DeepCopy()
-	deploy.Annotations[SuspendedKey] = encodeSuspendedState(state)
-	deploy.Labels[SuspendedKey] = ""
-	deploy.Labels[SuspendedClassKey] = class
+	updateMetadata(deploy, state, class)
 	deploy.Spec.Replicas = &desiredReplicas
 
 	if !c.dryRun {
@@ -535,9 +533,7 @@ func (c *Controller) suspendStatefulSet(sts *appsv1.StatefulSet, class string) e
 	}
 
 	sts = sts.DeepCopy()
-	sts.Annotations[SuspendedKey] = encodeSuspendedState(state)
-	sts.Labels[SuspendedKey] = ""
-	sts.Labels[SuspendedClassKey] = class
+	updateMetadata(sts, state, class)
 	sts.Spec.Replicas = &desiredReplicas
 
 	if !c.dryRun {
@@ -634,8 +630,7 @@ func (c *Controller) suspendCronJob(cronJob *batchv1.CronJob) error {
 	}
 
 	cronJob = cronJob.DeepCopy()
-	cronJob.Annotations[SuspendedKey] = encodeSuspendedState(state)
-	cronJob.Labels[SuspendedKey] = ""
+	updateMetadata(cronJob, state, CronJobClass)
 	cronJob.Spec.Suspend = &desiredSuspend
 
 	if !c.dryRun {
@@ -882,4 +877,26 @@ func isNonCriticalOperator(name string) bool {
 		return true
 	}
 	return strings.Contains(name, "operator")
+}
+
+func updateMetadata(object metav1.Object, state suspendedState, class string) {
+	annotations := object.GetAnnotations()
+	if annotations == nil {
+		annotations = make(map[string]string)
+		object.SetAnnotations(annotations)
+	}
+
+	annotations[SuspendedKey] = encodeSuspendedState(state)
+
+	labels := object.GetLabels()
+	if labels == nil {
+		labels = make(map[string]string)
+		object.SetLabels(labels)
+	}
+
+	labels[SuspendedKey] = ""
+
+	if len(class) > 0 {
+		labels[SuspendedClassKey] = class
+	}
 }
