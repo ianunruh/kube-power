@@ -5,6 +5,15 @@ that rely on Rook-based Ceph storage.
 
 ## Usage
 
+### Argo Workflows
+
+```
+kubectl kustomize "https://github.com/ianunruh/kube-power.git/deploy/argo?ref=v1.0.0" | \
+    kubectl apply -n kube-system -f-
+```
+
+### Manual
+
 ```
 go install github.com/ianunruh/kube-power@latest
 ```
