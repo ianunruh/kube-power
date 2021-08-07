@@ -9,4 +9,4 @@ bases:
 - ../base
 images:
 - name: ghcr.io/ianunruh/kube-power
-  newTag: v1.0.0
+  newTag: v1.0.1

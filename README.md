@@ -20,7 +20,7 @@ Rook-based Ceph storage to operate, then kube-power can be triggered by an opera
 from a WorkflowTemplate.
 
 ```
-kubectl kustomize "https://github.com/ianunruh/kube-power.git/deploy/argo?ref=v1.0.0" | \
+kubectl kustomize "https://github.com/ianunruh/kube-power.git/deploy/argo?ref=v1.0.1" | \
     kubectl apply -n kube-system -f-
 ```
 
@@ -37,7 +37,7 @@ kubectl apply -k deploy/job
 ### Locally
 
 ```
-go install github.com/ianunruh/kube-power@v1.0.0
+go install github.com/ianunruh/kube-power@v1.0.1
 ```
 
 ```

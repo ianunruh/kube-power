@@ -6,7 +6,7 @@ spec:
   arguments:
     parameters:
     - name: image
-      value: ghcr.io/ianunruh/kube-power:v1.0.0
+      value: ghcr.io/ianunruh/kube-power:v1.0.1
     - name: target
       value: kp-resume
 
