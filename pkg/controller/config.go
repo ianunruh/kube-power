@@ -10,6 +10,15 @@ import (
 )
 
 func LoadKubeConfig(path string) (*restclient.Config, error) {
+	cfg, err := restclient.InClusterConfig()
+	if err != nil {
+		if !errors.Is(err, restclient.ErrNotInCluster) {
+			return nil, err
+		}
+	} else {
+		return cfg, nil
+	}
+
 	if path == "" {
 		if home := homedir.HomeDir(); home != "" {
 			path = filepath.Join(home, ".kube", "config")
