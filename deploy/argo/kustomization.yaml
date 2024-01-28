@@ -4,6 +4,5 @@ namespace: kube-system
 commonLabels:
   app.kubernetes.io/name: kube-power
 resources:
-- workflowtemplate.yaml
-bases:
 - ../base
+- workflowtemplate.yaml

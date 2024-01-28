@@ -4,9 +4,8 @@ namespace: kube-system
 commonLabels:
   app.kubernetes.io/name: kube-power
 resources:
-- job.yaml
-bases:
 - ../base
+- job.yaml
 images:
 - name: ghcr.io/ianunruh/kube-power
   newTag: v1.0.1
