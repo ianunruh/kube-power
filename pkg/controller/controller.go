@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"slices"
 	"strings"
 	"time"
 
@@ -309,7 +310,7 @@ func (c *Controller) UpdateCephFlags(ensure bool) error {
 	action := "set"
 
 	if !ensure {
-		osdFlags = reverseStringSlice(osdFlags)
+		slices.Reverse(osdFlags)
 		action = "unset"
 	}
 
@@ -859,14 +860,6 @@ func namespacedName(namespace, name string) types.NamespacedName {
 		Namespace: namespace,
 		Name:      name,
 	}
-}
-
-func reverseStringSlice(elements []string) []string {
-	for i := 0; i < len(elements)/2; i++ {
-		j := len(elements) - i - 1
-		elements[i], elements[j] = elements[j], elements[i]
-	}
-	return elements
 }
 
 func isNonCriticalOperator(name string) bool {
