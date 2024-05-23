@@ -114,6 +114,14 @@ func (c *Controller) ResumeCluster() error {
 		return err
 	}
 
+	if err := c.ResumeCephRGW(); err != nil {
+		return err
+	}
+
+	if err := c.ResumeCephOperator(); err != nil {
+		return err
+	}
+
 	if err := c.WaitForCephHealthOK(); err != nil {
 		return err
 	}
@@ -140,7 +148,7 @@ func (c *Controller) SuspendOperators() error {
 	}
 
 	for _, deploy := range deployments {
-		if !isNonCriticalOperator(deploy.Name) {
+		if !isOperator(deploy.Name) {
 			continue
 		}
 
@@ -164,7 +172,7 @@ func (c *Controller) SuspendOperators() error {
 	}
 
 	for _, sts := range statefulSets {
-		if !isNonCriticalOperator(sts.Name) {
+		if !isOperator(sts.Name) {
 			continue
 		}
 
@@ -233,7 +241,7 @@ func (c *Controller) SuspendCephConsumers() error {
 		// that looks like an operator, as those will be suspended first
 		for _, deploy := range deployments {
 			if deploymentHasClaim(deploy, claim) {
-				if isNonCriticalOperator(deploy.Name) {
+				if isOperator(deploy.Name) {
 					continue
 				}
 				deploysInScope[namespacedName(deploy.Namespace, deploy.Name)] = true
@@ -421,8 +429,6 @@ func (c *Controller) ResumeCephDaemons() error {
 		rookDaemonSelector("mon"),
 		rookDaemonSelector("osd"),
 		rookDaemonSelector("mds"),
-		rookDaemonSelector("rgw"),
-		rookOperatorSelector(),
 	}
 
 	for _, selector := range selectors {
@@ -432,6 +438,14 @@ func (c *Controller) ResumeCephDaemons() error {
 	}
 
 	return nil
+}
+
+func (c *Controller) ResumeCephRGW() error {
+	return c.ResumeDeploys(rookDaemonSelector("rgw"))
+}
+
+func (c *Controller) ResumeCephOperator() error {
+	return c.ResumeDeploys(rookOperatorSelector())
 }
 
 func (c *Controller) suspendDeploy(deploy *appsv1.Deployment, class string) error {
@@ -862,11 +876,9 @@ func namespacedName(namespace, name string) types.NamespacedName {
 	}
 }
 
-func isNonCriticalOperator(name string) bool {
+func isOperator(name string) bool {
 	// TODO some of this could be configurable
-	if name == "rook-ceph-operator" {
-		return false
-	} else if name == "argocd-application-controller" {
+	if name == "argocd-application-controller" {
 		return true
 	}
 	return strings.Contains(name, "operator")

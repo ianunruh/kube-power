@@ -20,6 +20,8 @@ Available phases:
 * ResumeAllDeploys
 * ResumeCephConsumers
 * ResumeCephDaemons
+* ResumeCephOperator
+* ResumeCephRGW
 * ResumeCronJobs
 * ResumeOperators
 * SetCephFlags
@@ -42,6 +44,10 @@ Available phases:
 			return ctrl.ResumeCephConsumers()
 		case "ResumeCephDaemons":
 			return ctrl.ResumeCephDaemons()
+		case "ResumeCephOperator":
+			return ctrl.ResumeCephOperator()
+		case "ResumeCephRGW":
+			return ctrl.ResumeCephRGW()
 		case "ResumeCronJobs":
 			return ctrl.ResumeCronJobs()
 		case "ResumeOperators":
