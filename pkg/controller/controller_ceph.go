@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"slices"
 	"strings"
@@ -100,7 +101,7 @@ func (c *Controller) execPodCommand(pod *corev1.Pod, command string) (stdout, st
 	stderrBuffer := &bytes.Buffer{}
 	stdoutBuffer := &bytes.Buffer{}
 
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
 		Stderr: stderrBuffer,
 		Stdout: stdoutBuffer,
 	})
