@@ -46,7 +46,7 @@ func (c *Controller) UpdateCephFlags(ensure bool) error {
 			zap.String("name", pod.Name),
 			zap.String("command", command))
 
-		if !c.dryRun {
+		if !c.cfg.DryRun {
 			stdout, stderr, err := c.execPodCommand(pod, command)
 			c.log.Debug("Executed Ceph command",
 				zap.String("namespace", pod.Namespace),

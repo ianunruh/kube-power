@@ -134,7 +134,7 @@ func (c *Controller) resumeDeploy(deploy *appsv1.Deployment) error {
 	delete(deploy.Labels, SuspendedClassKey)
 	deploy.Spec.Replicas = state.Replicas
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.AppsV1().
 			Deployments(deploy.Namespace).
 			Update(context.Background(), deploy, metav1.UpdateOptions{})
@@ -230,7 +230,7 @@ func (c *Controller) resumeCronJob(cronJob *batchv1.CronJob) error {
 	delete(cronJob.Labels, SuspendedKey)
 	cronJob.Spec.Suspend = state.Suspend
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.BatchV1().
 			CronJobs(cronJob.Namespace).
 			Update(context.Background(), cronJob, metav1.UpdateOptions{})
@@ -262,7 +262,7 @@ func (c *Controller) resumeStatefulSet(sts *appsv1.StatefulSet) error {
 	delete(sts.Labels, SuspendedClassKey)
 	sts.Spec.Replicas = state.Replicas
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.AppsV1().
 			StatefulSets(sts.Namespace).
 			Update(context.Background(), sts, metav1.UpdateOptions{})

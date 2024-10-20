@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	configPath     = ""
 	dryRun         = false
 	kubeConfigPath = ""
 
@@ -31,7 +32,15 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		ctrl, err = controller.NewController(dryRun, restConfig, log)
+		cfg, err := controller.LoadConfig(configPath)
+		if err != nil {
+			return err
+		}
+		if dryRun {
+			cfg.DryRun = true
+		}
+
+		ctrl, err = controller.NewController(cfg, restConfig, log)
 		if err != nil {
 			return err
 		}
@@ -44,6 +53,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "Path to YAML config file")
 	rootCmd.PersistentFlags().BoolVar(&dryRun, "dry-run", false, "Plan actions but skip performing them")
 	rootCmd.PersistentFlags().StringVar(&kubeConfigPath, "kubeconfig", "", "Path to kube config")
 

@@ -12,8 +12,10 @@ func TestController_IsCephHealthOK(t *testing.T) {
 	restConfig, err := LoadKubeConfig("")
 	require.NoError(t, err)
 
+	cfg := Config{}
+
 	log := zaptest.NewLogger(t)
-	ctrl, err := NewController(true, restConfig, log)
+	ctrl, err := NewController(cfg, restConfig, log)
 	require.NoError(t, err)
 
 	healthOK, err := ctrl.IsCephHealthOK()

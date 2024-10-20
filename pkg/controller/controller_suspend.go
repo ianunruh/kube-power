@@ -72,7 +72,7 @@ func (c *Controller) SuspendCephConsumers() error {
 		// that looks like an operator, as those will be suspended first
 		for _, deploy := range deployments {
 			if deploymentHasClaim(deploy, claim) {
-				if isOperator(deploy.Name) {
+				if c.isOperator(deploy.Name, deploy.Labels) {
 					continue
 				}
 				deploysInScope[namespacedName(deploy.Namespace, deploy.Name)] = true
@@ -154,7 +154,7 @@ func (c *Controller) SuspendOperators() error {
 	}
 
 	for _, deploy := range deployments {
-		if !isOperator(deploy.Name) {
+		if !c.isOperator(deploy.Name, deploy.Labels) {
 			continue
 		}
 
@@ -178,7 +178,7 @@ func (c *Controller) SuspendOperators() error {
 	}
 
 	for _, sts := range statefulSets {
-		if !isOperator(sts.Name) {
+		if !c.isOperator(sts.Name, sts.Labels) {
 			continue
 		}
 
@@ -218,7 +218,7 @@ func (c *Controller) suspendDeploy(deploy *appsv1.Deployment, class string) erro
 	updateMetadata(deploy, state, class)
 	deploy.Spec.Replicas = &desiredReplicas
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.AppsV1().
 			Deployments(deploy.Namespace).
 			Update(context.Background(), deploy, metav1.UpdateOptions{})
@@ -294,7 +294,7 @@ func (c *Controller) suspendCronJob(cronJob *batchv1.CronJob) error {
 	updateMetadata(cronJob, state, CronJobClass)
 	cronJob.Spec.Suspend = &desiredSuspend
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.BatchV1().
 			CronJobs(cronJob.Namespace).
 			Update(context.Background(), cronJob, metav1.UpdateOptions{})
@@ -327,7 +327,7 @@ func (c *Controller) suspendStatefulSet(sts *appsv1.StatefulSet, class string) e
 	updateMetadata(sts, state, class)
 	sts.Spec.Replicas = &desiredReplicas
 
-	if !c.dryRun {
+	if !c.cfg.DryRun {
 		_, err := c.clientset.AppsV1().
 			StatefulSets(sts.Namespace).
 			Update(context.Background(), sts, metav1.UpdateOptions{})

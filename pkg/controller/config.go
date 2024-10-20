@@ -2,12 +2,39 @@ package controller
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 
+	"gopkg.in/yaml.v3"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 )
+
+type Config struct {
+	DryRun bool `yaml:"dryRun"`
+
+	Operators OperatorConfig `yaml:"operators"`
+}
+
+func LoadConfig(path string) (Config, error) {
+	var cfg Config
+
+	if path == "" {
+		return cfg, nil
+	}
+
+	encoded, err := os.ReadFile(path)
+	if err != nil {
+		return cfg, err
+	}
+
+	if err := yaml.Unmarshal(encoded, &cfg); err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
 
 func LoadKubeConfig(path string) (*restclient.Config, error) {
 	cfg, err := restclient.InClusterConfig()

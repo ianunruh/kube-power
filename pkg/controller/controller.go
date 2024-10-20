@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"strings"
-
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/informers"
@@ -13,7 +11,7 @@ import (
 	restclient "k8s.io/client-go/rest"
 )
 
-func NewController(dryRun bool, restConfig *restclient.Config, log *zap.Logger) (*Controller, error) {
+func NewController(cfg Config, restConfig *restclient.Config, log *zap.Logger) (*Controller, error) {
 	clientset, err := kubernetes.NewForConfig(restConfig)
 	if err != nil {
 		return nil, err
@@ -24,7 +22,7 @@ func NewController(dryRun bool, restConfig *restclient.Config, log *zap.Logger) 
 	informerFactory := informers.NewSharedInformerFactory(clientset, 0)
 
 	ctrl := &Controller{
-		dryRun:     dryRun,
+		cfg:        cfg,
 		restConfig: restConfig,
 		log:        log,
 
@@ -47,7 +45,7 @@ func NewController(dryRun bool, restConfig *restclient.Config, log *zap.Logger) 
 }
 
 type Controller struct {
-	dryRun     bool
+	cfg        Config
 	restConfig *restclient.Config
 	log        *zap.Logger
 
@@ -77,12 +75,4 @@ func namespacedName(namespace, name string) types.NamespacedName {
 		Namespace: namespace,
 		Name:      name,
 	}
-}
-
-func isOperator(name string) bool {
-	// TODO some of this could be configurable
-	if name == "argocd-application-controller" {
-		return true
-	}
-	return strings.Contains(name, "operator")
 }

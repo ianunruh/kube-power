@@ -1,0 +1,14 @@
+dryRun: false
+
+operators:
+  include:
+    - name: my-operator
+    - labels:
+        - app.kubernetes.io/name: my-operator
+
+  exclude:
+    - name: my-operator
+    - labels:
+        - app.kubernetes.io/name: my-operator
+
+  disableDefaults: false
