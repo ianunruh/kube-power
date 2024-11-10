@@ -8,15 +8,14 @@ spec:
       restartPolicy: Never
       serviceAccountName: kube-power
       containers:
-      - name: kube-power
-        image: ghcr.io/ianunruh/kube-power
-        args:
-        - suspend
-        - --dry-run
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 250m
-            memory: 256Mi
+        - name: kube-power
+          image: ghcr.io/ianunruh/kube-power
+          args:
+            - suspend
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

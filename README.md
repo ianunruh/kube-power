@@ -5,11 +5,11 @@ that rely on Rook-based Ceph storage.
 
 ## Features
 
-* Identifies any Deployments and StatefulSets that use Rook-based storage
+- Identifies any Deployments and StatefulSets that use Rook-based storage
   and scales them to zero replicas
-* Stops Ceph components in specific order to ensure data integrity
-* Applies flags to the Ceph cluster to prevent unnecessary rebalancing
-* Waits for Ceph to become healthy before resuming workflows that rely on it
+- Stops Ceph components in specific order to ensure data integrity
+- Applies flags to the Ceph cluster to prevent unnecessary rebalancing
+- Waits for Ceph to become healthy before resuming workflows that rely on it
 
 ## Usage
 
